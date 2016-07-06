@@ -10,7 +10,8 @@ ipcMain.on('ping', (event, arg) => {
 // ipcMain.send('poo');
 
 var mb = menubar({
-    dir: __dirname
+    dir: __dirname,
+    transparent: true
 });
 
 
@@ -24,6 +25,8 @@ mb.on('ready', function ready () {
 
 mb.on('after-create-window', function () {
     let html = mb.window.webContents;
+
+
     // html.openDevTools({mode: 'detach'});
 });
 
