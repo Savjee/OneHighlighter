@@ -2,96 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>OneHighlighter</title>
 
     <script type="text/javascript" src="lib/highlight.pack.js"></script>
     <link rel="stylesheet" href="lib/styles/idea.css">
-
-    <style>
-        body{
-            font-family: "Helvetica Neue",serif;
-        }
-        .background{
-            position: relative;
-            margin-top: 12px;
-            background-color: #2d2d2d;
-            z-index: 1;
-            border-top-left-radius: 5px;
-            border-top-right-radius: 5px;
-            color: #fff;
-            text-align:center;
-            padding: 20px;
-            font-weight:200;
-            font-size: 20px;
-            /*box-shadow: 4px 0px 7px rgba(0,0,0,0.25);*/
-        }
-
-        select{
-            font-size: 20px;
-        }
-
-        .background:after, .background:before {
-            bottom: 100%;
-            left: 50%;
-            border: solid transparent;
-            content: " ";
-            height: 0;
-            width: 0;
-            position: absolute;
-            pointer-events: none;
-        }
-
-        .background:before {
-            border-color: rgba(194, 225, 245, 0);
-            border-bottom-color: #2d2d2d;
-            border-width: 11px;
-            margin-left: -12px;
-        }
-
-        .content{
-            background-color: #f1efee;
-            padding: 10px;
-            border-bottom-left-radius: 5px;
-            border-bottom-right-radius: 5px;
-            /*box-shadow: 4px 4px 7px rgba(0,0,0,0.25);*/
-            height: 250px;
-        }
-
-        #close-button{
-            float:right;
-        }
-
-        #close-button a{
-            color: #5d5d5d;
-            text-decoration: none;
-        }
-
-        #close-button a:hover{
-            color: #fff;
-        }
-        
-        #close-button :hover{
-
-        }
-
-        pre {
-            height: auto;
-            max-height: 200px;
-            overflow: auto;
-            background-color: #eeeeee;
-            word-break: normal !important;
-            word-wrap: normal !important;
-            white-space: pre !important;
-        }​
-
-
-
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="background">
-    Language:
+    <label for="language">Language:</label>
     <select id="language">
         <option value="auto">Auto detect</option>
         <option value="js">Javascript</option>
@@ -115,6 +35,8 @@
 
 <div class="content">
     <p style="color: green; text-align:center;">✔ Copied to your clipboard</p>
+
+    <p class="preview">Preview</p>
     <pre><code id="preview"></code></pre>
 </div>
 
@@ -126,16 +48,22 @@
 
     // Require dependencies
     const {clipboard} = require('electron');
+    const {remote} = require('electron');
     const inlineCss = require('inline-css');
-    const remote = require('electron').remote;
 
     // CSS styles for the highlighting (will be inlined)
     let css = ".hljs{display:block;overflow-x:auto;padding:0.5em;color:#000;background:#fff}.hljs-subst,.hljs-title{font-weight:normal;color:#000}.hljs-comment,.hljs-quote{color:#808080;font-style:italic}.hljs-meta{color:#808000}.hljs-tag{background:#efefef}.hljs-section,.hljs-name,.hljs-literal,.hljs-keyword,.hljs-selector-tag,.hljs-type,.hljs-selector-id,.hljs-selector-class{font-weight:bold;color:#000080}.hljs-attribute,.hljs-number,.hljs-regexp,.hljs-link{font-weight:bold;color:#0000ff}.hljs-number,.hljs-regexp,.hljs-link{font-weight:normal}.hljs-string{color:#008000;font-weight:bold}.hljs-symbol,.hljs-bullet,.hljs-formula{color:#000;background:#d0eded;font-style:italic}.hljs-doctag{text-decoration:underline}.hljs-variable,.hljs-template-variable{color:#660e7a}.hljs-addition{background:#baeeba}.hljs-deletion{background:#ffc8bd}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:bold}";
 
+    /**
+     * When user picks another language, rerun the highlighting logic
+     */
     document.getElementById('language').addEventListener('change', function(){
         run();
     });
 
+    /**
+     * The main highlight logic
+     */
     function run() {
         console.log('Running...');
 
@@ -171,14 +99,19 @@
                         html: htmlCode
                     });
                 });
-
     }
 
+    /**
+     * Add event listener for the close button
+     */
     document.getElementById('close-button').addEventListener('click', function(){
         let window = remote.getCurrentWindow();
         window.close();
     });
 
+    /**
+     * Reset the code value and selected language (everytime window loses focus)
+     */
     function reset(){
         codeToHighlight = null;
         document.getElementById('language').value="auto";
