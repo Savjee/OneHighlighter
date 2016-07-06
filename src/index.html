@@ -121,36 +121,43 @@
 
 <script type="text/javascript">
 
+    // Cache for the code to highlight (coming from clipboard)
+    var codeToHighlight = null;
+
     // Require dependencies
     const {clipboard} = require('electron');
     const inlineCss = require('inline-css');
+    const remote = require('electron').remote;
 
     // CSS styles for the highlighting (will be inlined)
     let css = ".hljs{display:block;overflow-x:auto;padding:0.5em;color:#000;background:#fff}.hljs-subst,.hljs-title{font-weight:normal;color:#000}.hljs-comment,.hljs-quote{color:#808080;font-style:italic}.hljs-meta{color:#808000}.hljs-tag{background:#efefef}.hljs-section,.hljs-name,.hljs-literal,.hljs-keyword,.hljs-selector-tag,.hljs-type,.hljs-selector-id,.hljs-selector-class{font-weight:bold;color:#000080}.hljs-attribute,.hljs-number,.hljs-regexp,.hljs-link{font-weight:bold;color:#0000ff}.hljs-number,.hljs-regexp,.hljs-link{font-weight:normal}.hljs-string{color:#008000;font-weight:bold}.hljs-symbol,.hljs-bullet,.hljs-formula{color:#000;background:#d0eded;font-style:italic}.hljs-doctag{text-decoration:underline}.hljs-variable,.hljs-template-variable{color:#660e7a}.hljs-addition{background:#baeeba}.hljs-deletion{background:#ffc8bd}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:bold}";
 
+    document.getElementById('language').addEventListener('change', function(){
+        run();
+    });
+
     function run() {
-        let codeToHighlight = clipboard.readText();
+        console.log('Running...');
 
-        /**
-         * PREVIEW
-         */
-        hljs.configure({useBR: false, tabReplace: '  '}); // don't use <br> in html
-        document.getElementById('preview').textContent = codeToHighlight;
-        hljs.highlightBlock(document.getElementById('preview'));
+        // Cache the clipboard contents
+        if(codeToHighlight == null){
+            codeToHighlight = clipboard.readText();
+        }
 
-        /**
-         * Copy to clipboard
-         */
         hljs.configure({useBR: true, tabReplace: '  '}); // don't use <br> in html
 
         let language = document.getElementById('language').value;
         let result;
 
         if (language == "auto") {
+            console.log('Automatically detecting language');
             result = hljs.highlightAuto(codeToHighlight);
         } else {
+            console.log("Using language: " + language);
             result = hljs.highlightAuto(codeToHighlight, [language]);
         }
+
+        document.getElementById('preview').innerHTML = result.value;
 
         inlineCss(result.value, {url: '.', extraCss: css})
                 .then(function (html) {
@@ -167,11 +174,13 @@
 
     }
 
-    document.getElementById('language').addEventListener('change', function(){
-        run();
+    document.getElementById('close-button').addEventListener('click', function(){
+        let window = remote.getCurrentWindow();
+        window.close();
     });
 
     function reset(){
+        codeToHighlight = null;
         document.getElementById('language').value="auto";
     }
 </script>
