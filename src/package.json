@@ -1,0 +1,14 @@
+{
+  "name": "onehighlighter",
+  "version": "0.1.0",
+  "description": "Syntax Highlighting with one click!",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Xavier Decuyper",
+  "license": "GPL-2.0",
+  "devDependencies": {
+    "electron-prebuilt": "^1.2.0"
+  }
+}
