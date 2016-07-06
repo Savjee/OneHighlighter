@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script type="text/javascript" src="lib/highlight.pack.js"></script>
+    <link rel="stylesheet" href="lib/styles/idea.css">
+</head>
+<body>
+
+Language:
+<select id="language">
+    <option value="auto">Auto detect</option>
+    <option value="js">Javascript</option>
+    <option value="xml">HTML</option>
+    <option value="bash">Bash</option>
+    <option value="css">CSS</option>
+    <option value="java">Java</option>
+    <option value="json">JSON</option>
+    <option value="markdown">Markdown</option>
+    <option value="php">PHP</option>
+    <option value="python">Python</option>
+    <option value="ruby">Ruby</option>
+    <option value="sql">SQL</option>
+</select>
+
+<p>Your code was highlighted and copied to your clipboard</p>
+<pre><code id="preview"></code></pre>
+
+<!--<textarea id="codeToHighlight" title="Paste your code here" style="width: 100%; height: 200px;"></textarea>-->
+
+
+<!--<button id="go">Highlight!</button>-->
+<!---->
+<!--<hr>-->
+<!---->
+<!--Preview:-->
+
+
+<script type="text/javascript">
+
+    // Require dependencies
+    const {clipboard} = require('electron');
+    const inlineCss = require('inline-css');
+
+
+    // CSS styles for the highlighting (will be inlined)
+    var css = ".hljs{display:block;overflow-x:auto;padding:0.5em;color:#000;background:#fff}.hljs-subst,.hljs-title{font-weight:normal;color:#000}.hljs-comment,.hljs-quote{color:#808080;font-style:italic}.hljs-meta{color:#808000}.hljs-tag{background:#efefef}.hljs-section,.hljs-name,.hljs-literal,.hljs-keyword,.hljs-selector-tag,.hljs-type,.hljs-selector-id,.hljs-selector-class{font-weight:bold;color:#000080}.hljs-attribute,.hljs-number,.hljs-regexp,.hljs-link{font-weight:bold;color:#0000ff}.hljs-number,.hljs-regexp,.hljs-link{font-weight:normal}.hljs-string{color:#008000;font-weight:bold}.hljs-symbol,.hljs-bullet,.hljs-formula{color:#000;background:#d0eded;font-style:italic}.hljs-doctag{text-decoration:underline}.hljs-variable,.hljs-template-variable{color:#660e7a}.hljs-addition{background:#baeeba}.hljs-deletion{background:#ffc8bd}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:bold}";
+
+    function run() {
+        let codeToHighlight = clipboard.readText();
+
+        /**
+         * PREVIEW
+         */
+        hljs.configure({useBR: false, tabReplace: '  '}); // don't use <br> in html
+        document.getElementById('preview').textContent = codeToHighlight;
+        hljs.highlightBlock(document.getElementById('preview'));
+
+        /**
+         * Copy to clipboard
+         */
+        hljs.configure({useBR: true, tabReplace: '  '}); // don't use <br> in html
+
+        let language = document.getElementById('language').value;
+        let result;
+
+        if (language == "auto") {
+            result = hljs.highlightAuto(codeToHighlight);
+        } else {
+            result = hljs.highlightAuto(codeToHighlight, [language]);
+        }
+
+        inlineCss(result.value, {url: '.', extraCss: css})
+                .then(function (html) {
+
+                    let htmlCode = "<div style='font-family:Courier new, Courier, monospace;'>";
+                    htmlCode += hljs.fixMarkup(html).replace(/\s{2}/gi, '&nbsp;&nbsp;');
+                    htmlCode += "</div>";
+
+                    clipboard.write({
+                        text: codeToHighlight,
+                        html: htmlCode
+                    });
+                });
+
+    }
+
+    document.getElementById('language').addEventListener('change', function(){
+        run();
+    });
+
+    function reset(){
+        document.getElementById('language').value="auto";
+    }
+</script>
+</body>
+</html>
