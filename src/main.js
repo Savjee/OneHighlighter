@@ -3,7 +3,8 @@ const {clipboard} = require('electron');
 
 let mb = menubar({
     dir: __dirname,
-    transparent: true
+    transparent: true,
+    icon: 'img/IconTemplate.png'
 });
 
 mb.on('ready', function ready () {
@@ -13,7 +14,6 @@ mb.on('ready', function ready () {
 mb.on('after-create-window', function () {
     // html.openDevTools({mode: 'detach'});
 });
-
 
 mb.on('after-show', function(){
     console.log("after-show");
