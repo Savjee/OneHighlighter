@@ -1,10 +1,11 @@
 const menubar = require('menubar');
 const {clipboard} = require('electron');
+var path = require('path')
 
 let mb = menubar({
     dir: __dirname,
     transparent: true,
-    icon: 'img/IconTemplate.png'
+    icon: path.join(__dirname, '/img/IconTemplate.png')
 });
 
 mb.on('ready', function ready () {
