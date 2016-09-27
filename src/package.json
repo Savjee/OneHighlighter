@@ -10,5 +10,8 @@
   "license": "GPL-2.0",
   "devDependencies": {
     "electron-prebuilt": "^1.2.0"
+  },
+  "dependencies": {
+    "menubar": "^5.1.0"
   }
 }
