@@ -49,6 +49,7 @@ OneHighlighter supports code highlighting for the following languages:
 * TypeScript
 * HTML
 * XML
+* YAML
 
 # Download
 OneHighlighter is available [for free on the Mac App Store](https://itunes.apple.com/be/app/onehighlighter/id1131580917?mt=12&amp;ls=1).
