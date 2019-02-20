@@ -14,6 +14,7 @@
     "electron-prebuilt": "^1.2.0"
   },
   "dependencies": {
+    "inline-css": "^2.4.1",
     "menubar": "^5.2.3"
   },
   "build": {
